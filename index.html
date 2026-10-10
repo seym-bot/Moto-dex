@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Moto DeX</title>
+<style>
+:root{--glass:rgba(12,25,46,.94);--line:rgba(255,255,255,.17);--blue:#168cff}
+*{box-sizing:border-box}body{margin:0;font:14px system-ui,Arial;color:#f5f8ff;overflow:hidden;background:radial-gradient(ellipse at 75% 20%,#153d82 0,transparent 45%),linear-gradient(135deg,#071326,#102b58 55%,#090f24);height:100dvh}
+.wall{position:absolute;inset:0;background:radial-gradient(ellipse at 15% 90%,#0756a9aa,transparent 40%),linear-gradient(130deg,transparent 35%,#157bff22 36%,transparent 53%)}
+.brand{position:absolute;top:16px;left:18px;font-size:20px;font-weight:750;letter-spacing:.2px}.brand span{color:#56b2ff}.desktop-icons{position:absolute;top:65px;left:10px;display:flex;flex-direction:column;gap:13px}
+.icon{width:64px;border:0;background:transparent;color:#fff;text-align:center;font-size:11px;padding:4px;border-radius:10px}.icon b{display:block;font-size:26px;margin-bottom:3px}.icon:active{background:#ffffff22}
+.taskbar{position:absolute;bottom:0;left:0;right:0;height:58px;background:rgba(3,10,25,.86);backdrop-filter:blur(18px);border-top:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:0 12px;z-index:30}
+.start{font-size:23px;background:#172b49;border:1px solid var(--line);border-radius:12px;color:white;width:43px;height:40px}.task{font-size:21px;border:0;background:transparent;color:white;padding:7px;border-radius:10px}.spacer{flex:1}.status{font-size:12px;white-space:nowrap}
+.window{position:absolute;left:16%;top:23%;width:76%;height:42%;min-height:175px;background:var(--glass);border:1px solid #ffffff3a;border-radius:13px;box-shadow:0 18px 50px #0008;overflow:hidden;display:flex;flex-direction:column;z-index:5;backdrop-filter:blur(20px)}
+.titlebar{height:39px;flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 9px;background:#ffffff0b;border-bottom:1px solid var(--line);touch-action:none;font-weight:650}.win-controls{margin-left:auto;display:flex;gap:3px}.win-controls button{border:0;background:transparent;color:white;font-size:17px;width:28px;height:28px;border-radius:6px}.win-controls button:active{background:#ffffff22}
+.content{padding:14px;overflow:auto;flex:1;color:#dce9ff}.search{padding:10px;border-radius:9px;background:#ffffff12;border:1px solid var(--line);color:#c9d9f3;margin:10px 0}
+.tilegrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.tile{padding:12px 4px;border-radius:10px;background:#ffffff0d;border:1px solid #ffffff12;text-align:center;font-size:12px}.tile strong{display:block;font-size:24px;margin-bottom:4px}
+.startmenu{display:none;position:absolute;z-index:40;bottom:66px;left:10px;width:min(310px,85vw);padding:15px;background:rgba(8,20,39,.97);border:1px solid var(--line);border-radius:16px;box-shadow:0 15px 40px #0009}.startmenu.show{display:block}.menuitem{padding:12px;border-radius:9px}.menuitem:active{background:#ffffff19}
+.note{font-size:12px;color:#a8c0e7;line-height:1.45}.hidden{display:none!important}
+@media(min-width:650px){.window{width:54%;height:54%;left:25%;top:18%}.desktop-icons{left:18px}.tilegrid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+</style></head><body><div class="wall"></div>
+<div class="brand">◉ <span>Moto</span> DeX</div>
+<div class="desktop-icons">
+<button class="icon" onclick="openWin('telefone')"><b>📱</b>Telefone</button>
+<button class="icon" onclick="openWin('arquivos')"><b>📁</b>Arquivos</button>
+<button class="icon" onclick="openWin('navegador')"><b>🌐</b>Navegador</button>
+<button class="icon" onclick="openWin('youtube')"><b>▶️</b>YouTube</button>
+<button class="icon" onclick="openWin('config')"><b>⚙️</b>Config.</button>
+</div>
+<div id="windows"></div>
+<div class="startmenu" id="startmenu"><h3 style="margin:4px 8px 10px">Moto DeX</h3><div class="search">🔎 Pesquisar aplicativos</div>
+<div class="menuitem" onclick="openWin('navegador');toggleMenu()">🌐 &nbsp; Navegador</div><div class="menuitem" onclick="openWin('arquivos');toggleMenu()">📁 &nbsp; Arquivos</div><div class="menuitem" onclick="openWin('youtube');toggleMenu()">▶️ &nbsp; YouTube</div><div class="menuitem" onclick="openWin('config');toggleMenu()">⚙️ &nbsp; Configurações</div><div class="menuitem" onclick="alert('Você pode sair usando o botão Voltar do Android.')">⏻ &nbsp; Sobre / sair</div>
+</div>
+<div class="taskbar"><button class="start" onclick="toggleMenu()">⊞</button><button class="task" onclick="openWin('navegador')">🌐</button><button class="task" onclick="openWin('arquivos')">📁</button><button class="task" onclick="openWin('youtube')">▶️</button><button class="task" onclick="openWin('config')">⚙️</button><div class="spacer"></div><div class="status">◈ ▴ ▰ <span id="clock">--:--</span></div></div>
+<script>
+let z=10, count=0;
+const content={
+telefone:['📱 Telefone','<h2>Telefone</h2><p>Atalho visual para o app Telefone do Android.</p><button onclick="launchInfo()">Abrir app do sistema</button>'],
+arquivos:['📁 Arquivos','<h3>Seus arquivos</h3><div class="tilegrid"><div class="tile"><strong>📥</strong>Downloads</div><div class="tile"><strong>🖼️</strong>Imagens</div><div class="tile"><strong>🎬</strong>Vídeos</div><div class="tile"><strong>📄</strong>Documentos</div></div><p class="note">Esta versão é uma interface demonstrativa; ainda não navega pelo armazenamento real.</p>'],
+navegador:['🌐 Navegador','<h3>Navegador</h3><div class="search" contenteditable="true" id="urlbox">Digite um endereço (nesta versão é uma demonstração)</div><p>O navegador real pode ser aberto pelo ícone do Chrome na tela inicial do Android.</p><button onclick="alert('Integração com navegador será adicionada em uma próxima versão.')">Abrir endereço</button>'],
+youtube:['▶️ YouTube','<h3>YouTube</h3><p>Abra o YouTube pelo aplicativo instalado no seu Motorola.</p><button onclick="alert('Esta versão ainda não abre outros aplicativos diretamente.')">Abrir YouTube</button>'],
+config:['⚙️ Configurações','<h3>Configurações do Moto DeX</h3><div class="tilegrid"><div class="tile"><strong>🌙</strong>Tema escuro</div><div class="tile"><strong>🪟</strong>Janelas</div><div class="tile"><strong>📱</strong>Sobre</div></div><p class="note">Moto DeX 0.1 — interface inicial experimental.</p>']
+};
+function openWin(id){let old=document.querySelector('[data-app="'+id+'"]');if(old){old.classList.remove('hidden');old.style.zIndex=++z;return}
+let [title,html]=content[id]||content.config;let el=document.createElement('section');el.className='window';el.dataset.app=id;el.style.zIndex=++z;el.style.left=(8+(count%4)*5)+'%';el.style.top=(17+(count%4)*4)+'%';count++;
+el.innerHTML='<div class="titlebar"><span>'+title+'</span><div class="win-controls"><button aria-label="minimizar" onclick="this.closest(\'.window\').classList.add(\'hidden\')">−</button><button aria-label="trazer para frente" onclick="this.closest(\'.window\').style.zIndex=++z">□</button><button aria-label="fechar" onclick="this.closest(\'.window\').remove()">×</button></div></div><div class="content">'+html+'</div>';
+document.getElementById('windows').appendChild(el);drag(el,el.querySelector('.titlebar'));el.addEventListener('pointerdown',()=>el.style.zIndex=++z)}
+function drag(el,handle){let sx,sy,ox,oy;handle.addEventListener('pointerdown',e=>{if(e.target.tagName==='BUTTON')return;sx=e.clientX;sy=e.clientY;let r=el.getBoundingClientRect();ox=r.left;oy=r.top;el.style.zIndex=++z;handle.setPointerCapture(e.pointerId);function move(ev){el.style.left=Math.max(0,Math.min(innerWidth-el.offsetWidth,ox+ev.clientX-sx))+'px';el.style.top=Math.max(0,Math.min(innerHeight-80,oy+ev.clientY-sy))+'px'}function end(){handle.removeEventListener('pointermove',move);handle.removeEventListener('pointerup',end)}handle.addEventListener('pointermove',move);handle.addEventListener('pointerup',end)})}
+function toggleMenu(){document.getElementById('startmenu').classList.toggle('show')}
+function launchInfo(){alert('Para abrir o Telefone real, saia do Moto DeX e use o ícone do Android. Integração direta ainda não implementada.')}
+function tick(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}tick();setInterval(tick,30000);
+openWin('arquivos');
+</script></body></html>
